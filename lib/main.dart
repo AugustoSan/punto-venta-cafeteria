@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:punto_venta/models/business.dart';
+import 'package:punto_venta/presentation/providers/auth_provider.dart';
 
 import 'models/user.dart';
-import 'providers/auth_provider.dart';
-import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
+import 'presentation/screens/home/home_screen.dart';
+import 'presentation/screens/settings/settings_screen.dart';
+import 'presentation/providers/business_provider.dart';
+import 'presentation/screens/login/login_screen.dart';
 import 'services/auth_service.dart';
 
 Future<void> main() async {
@@ -13,15 +16,18 @@ Future<void> main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(BusinessAdapter());
 
   // Box de usuarios
   final userBox = await Hive.openBox<User>('users');
+  // Box de negocio
+  await Hive.openBox<Business>('business');
   // Si está vacío, creamos un usuario de ejemplo:
   if (userBox.isEmpty) {
-    // contraseña: "123456"
-    final hash = AuthService.hashPassword('123456');
-    await userBox.put('demo@ejemplo.com', User(
-      userName: 'demo@ejemplo.com',
+    // contraseña: "admin"
+    final hash = AuthService.hashPassword('admin');
+    await userBox.put('admin', User(
+      userName: 'admin',
       passwordHash: hash,
     ));
   }
@@ -30,8 +36,11 @@ Future<void> main() async {
   await Hive.openBox<String>('auth');
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthProvider()..checkLogin(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()..checkLogin()),
+        ChangeNotifierProvider(create: (_) => BusinessProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -39,14 +48,22 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
-  Widget build(BuildContext ctx) {
+  Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login Local con Hive',
-      home: Consumer<AuthProvider>(
-        builder: (ctx, auth, _) =>
-          auth.isLoggedIn ? const HomeScreen() : const LoginScreen(),
+      title: 'Punto de Venta',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      initialRoute: '/', // Ruta inicial
+      routes: {
+        '/': (context) => Consumer<AuthProvider>(
+          builder: (ctx, auth, _) =>
+            auth.isLoggedIn ? const HomeScreen() : const LoginScreen(),
+        ),
+        '/settings': (context) => const SettingsScreen(),
+      },
     );
   }
 }
