@@ -18,82 +18,101 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _taxC = TextEditingController();
   BusinessType _selectedType = BusinessType.cafeteria;
 
+  @override
+  void initState() {
+    super.initState();
+    // Carga inicial desde el provider
+    final biz = context.read<BusinessProvider>().business;
+    if (biz != null) {
+      _nameC.text     = biz.name;
+      _currencyC.text = biz.currency;
+      _taxC.text      = biz.taxPercent.toString();
+      _selectedType   = biz.type;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameC.dispose();
+    _currencyC.dispose();
+    _taxC.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final business = context.read<BusinessProvider>().business;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Configuración'),
-      ),
+      appBar: AppBar(title: const Text('Configuración')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _nameC,
-              initialValue: business?.name ?? 'Sin nombre',
-              decoration: const InputDecoration(
-                labelText: 'Nombre del negocio',
+        padding: const EdgeInsets.all(16),
+        child: Form(                 // ← Aquí
+          key: _formKey,            // atachas tu key al Form
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _nameC,
+                decoration: const InputDecoration(labelText: 'Nombre del negocio'),
+                validator: (v) => v != null && v.isNotEmpty
+                    ? null
+                    : 'Nombre del negocio inválido',
               ),
-              validator: (v) =>
-                v != null && v.isEmpty ? 'Nombre del negocio inválido' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _currencyC,
-              decoration: const InputDecoration(
-                labelText: 'Moneda',
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _currencyC,
+                decoration: const InputDecoration(labelText: 'Moneda'),
+                validator: (v) =>
+                    v != null && v.isNotEmpty ? null : 'Moneda inválida',
               ),
-              validator: (v) =>
-                v != null && v.isEmpty ? 'Moneda inválida' : null,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _taxC,
-              decoration: const InputDecoration(
-                labelText: 'Porcentaje de IVA',
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _taxC,
+                decoration: const InputDecoration(labelText: 'Porcentaje de IVA'),
+                keyboardType: TextInputType.number,
+                validator: (v) {
+                  if (v == null || v.isEmpty) return 'IVA requerido';
+                  if (double.tryParse(v) == null) return 'Debe ser un número';
+                  return null;
+                },
               ),
-              validator: (v) =>
-                v != null && v.isEmpty ? 'Porcentaje de IVA inválido' : null,
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<BusinessType>(
-              value: _selectedType,
-              decoration: const InputDecoration(
-                labelText: 'Tipo de negocio',
+              const SizedBox(height: 12),
+              DropdownButtonFormField<BusinessType>(
+                value: _selectedType,
+                decoration: const InputDecoration(labelText: 'Tipo de negocio'),
+                items: BusinessType.values.map((t) =>
+                  DropdownMenuItem(value: t, child: Text(t.name))
+                ).toList(),
+                onChanged: (t) {
+                  if (t != null) setState(() => _selectedType = t);
+                },
               ),
-              items: BusinessType.values.map((type) => DropdownMenuItem(
-                value: type,
-                child: Text(type.name),
-              )).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedType = value!;
-                });
-              },
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  // Aquí guardamos los datos
-                  final business = Business(
-                    name: _nameC.text,
-                    currency: _currencyC.text,
-                    taxPercent: double.parse(_taxC.text),
-                    type: _selectedType,
-                    enabledModules: [],
-                  );
-                  context.read<BusinessProvider>().saveBusiness(business);
-                }
-              },
-              child: const Text('Guardar'),
-            ),
-          ],
-        ),
+              const SizedBox(height: 24),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Ahora currentState no es null y validate() funciona
+                    if (_formKey.currentState!.validate()) {
+                      final business = Business(
+                        name: _nameC.text.trim(),
+                        currency: _currencyC.text.trim(),
+                        taxPercent: double.parse(_taxC.text.trim()),
+                        type: _selectedType,
+                        enabledModules: [],
+                      );
+                      context.read<BusinessProvider>().saveBusiness(business);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Guardado ✔️')),
+                      );
+                    }
+                  },
+                  child: const Text('Guardar'),
+                ),
+              ),
+            ],
+          ),
+        ),                        // ← Fin del Form
       ),
     );
   }
+
 }

@@ -5,10 +5,11 @@ import 'package:punto_venta/presentation/providers/business_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext ctx) {
-    final username = ctx.read<AuthProvider>().username;
-    final business = ctx.read<BusinessProvider>().business;
+    final username = ctx.watch<AuthProvider>().username;
+    final business = ctx.watch<BusinessProvider>().business;
     return Scaffold(
       appBar: AppBar(
         title: Text(business?.name ?? 'Sin Nombre'),
