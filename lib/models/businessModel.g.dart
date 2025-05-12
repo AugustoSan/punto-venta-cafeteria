@@ -1,35 +1,44 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'businessModel.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserAdapter extends TypeAdapter<User> {
+class BusinessModelAdapter extends TypeAdapter<BusinessModel> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  User read(BinaryReader reader) {
+  BusinessModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return User(
-      userName: fields[0] as String,
-      passwordHash: fields[1] as String,
+    return BusinessModel(
+      name: fields[0] as String,
+      currency: fields[1] as String,
+      taxPercent: fields[2] as double,
+      type: fields[3] as int,
+      enabledModules: (fields[4] as List).cast<String>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, User obj) {
+  void write(BinaryWriter writer, BusinessModel obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.userName)
+      ..write(obj.name)
       ..writeByte(1)
-      ..write(obj.passwordHash);
+      ..write(obj.currency)
+      ..writeByte(2)
+      ..write(obj.taxPercent)
+      ..writeByte(3)
+      ..write(obj.type)
+      ..writeByte(4)
+      ..write(obj.enabledModules);
   }
 
   @override
@@ -38,7 +47,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserAdapter &&
+      other is BusinessModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

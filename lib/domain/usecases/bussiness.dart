@@ -1,14 +1,14 @@
-import 'package:punto_venta/data/repository/config_repository_impl.dart';
-import 'package:punto_venta/domain/entities/business_config.dart';
+import 'package:punto_venta/domain/entities/business.dart';
+import 'package:punto_venta/domain/repositories/business_repository.dart';
 
 class GetBusinessConfig {
-  final ConfigRepository repo;
+  final BusinessRepository repo;
   GetBusinessConfig(this.repo);
-  Future<BusinessConfig?> call() => repo.getConfig();
+  Future<Business?> call() => repo.loadBusiness();
 }
 
 class SaveBusinessConfig {
-  final ConfigRepository repo;
+  final BusinessRepository repo;
   SaveBusinessConfig(this.repo);
-  Future<void> call(BusinessConfig cfg) => repo.setConfig(cfg);
+  Future<void> call(Business cfg) => repo.saveBusiness(cfg);
 }

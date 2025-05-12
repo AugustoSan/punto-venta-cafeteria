@@ -1,20 +1,20 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:punto_venta/domain/entities/business_config.dart';
+import 'package:punto_venta/domain/entities/business.dart';
 
 abstract class ConfigLocalDataSource {
-  Future<BusinessConfig?> loadConfig();
-  Future<void> saveConfig(BusinessConfig config);
+  Future<Business?> loadConfig();
+  Future<void> saveConfig(Business config);
 }
 
 class ConfigHiveDataSource implements ConfigLocalDataSource {
-  final box = Hive.box<BusinessConfig>('config');
+  final box = Hive.box<Business>('config');
 
   @override
-  Future<BusinessConfig?> loadConfig() async =>
-      box.get('businessConfig');
+  Future<Business?> loadConfig() async =>
+      box.get('business');
 
   @override
-  Future<void> saveConfig(BusinessConfig config) async {
-    await box.put('businessConfig', config);
+  Future<void> saveConfig(Business config) async {
+    await box.put('business', config);
   }
 }

@@ -11,13 +11,55 @@ class HomeScreen extends StatelessWidget {
     final business = ctx.read<BusinessProvider>().business;
     return Scaffold(
       appBar: AppBar(
-        title: Text(business?.name ?? 'Mi Negocio'),
+        title: Text(business?.name ?? 'Sin Nombre'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => ctx.read<AuthProvider>().logout(),
-          )
+          ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(ctx).primaryColor,
+              ),
+              child: Text(
+                business?.name ?? 'Sin Nombre',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Configuración'),
+              onTap: () {
+                Navigator.pushNamed(ctx, '/settings');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.person),
+              title: Text('Perfil'),
+              onTap: () {
+                Navigator.pop(ctx);
+                // Handle navigation
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.help),
+              title: Text('Ayuda'),
+              onTap: () {
+                Navigator.pop(ctx);
+                // Handle navigation
+              },
+            ),
+          ],
+        ),
       ),
       body: Center(
         child: Text('Has iniciado sesión como:\n$username'),

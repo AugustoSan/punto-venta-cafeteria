@@ -1,10 +1,10 @@
 import 'package:hive/hive.dart';
 
-part 'user.g.dart';
+part 'userModel.g.dart';
 
 
 @HiveType(typeId: 0)
-class User extends HiveObject {
+class UserModel extends HiveObject {
 
   @HiveField(0)
   String userName;
@@ -12,7 +12,7 @@ class User extends HiveObject {
   @HiveField(1)
   String passwordHash;
 
-  User({
+  UserModel({
     required this.userName,
     required this.passwordHash,
   });

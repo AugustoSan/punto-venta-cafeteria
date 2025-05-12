@@ -1,32 +1,40 @@
+// lib/presentation/providers/business_provider.dart
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import '../../domain/entities/business_config.dart';
-import '../../models/business.dart';
+import '../../domain/entities/business.dart';
+import '../../domain/repositories/business_repository.dart';
 
 class BusinessProvider with ChangeNotifier {
-  String _businessName = 'Mi Negocio';
-  BusinessType _businessType = BusinessType.cafeteria;
-  Business? _business;
+  final BusinessRepository _repo;
 
-  String get businessName => _businessName;
-  BusinessType get businessType => _businessType;
+  Business? _business;
   Business? get business => _business;
 
-  void updateBusinessName(String name) {
-    _businessName = name;
-    notifyListeners();
-  }
-
-  void updateBusinessType(BusinessType type) {
-    _businessType = type;
-    notifyListeners();
-  }
+  BusinessProvider(this._repo);
 
   Future<void> loadBusinessData() async {
-    final box = await Hive.openBox<Business>('business');
-    if (box.isNotEmpty) {
-      _business = box.getAt(0);
+    _business = await _repo.loadBusiness();
+    notifyListeners();
+  }
+
+  Future<void> updateBusinessName(String name) async {
+    if (_business != null) {
+      _business = _business!.copyWith(name: name);
+      await _repo.saveBusiness(_business!);
       notifyListeners();
     }
+  }
+
+  Future<void> updateBusinessType(BusinessType type) async {
+    if (_business != null) {
+      _business = _business!.copyWith(type: type);
+      await _repo.saveBusiness(_business!);
+      notifyListeners();
+    }
+  }
+
+  Future<void> saveBusiness(Business config) async {
+    _business = config;
+    await _repo.saveBusiness(config);
+    notifyListeners();
   }
 }

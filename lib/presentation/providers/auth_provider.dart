@@ -1,46 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:punto_venta/services/auth_service.dart';
-import '../../models/user.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 class AuthProvider with ChangeNotifier {
-  bool _isLoggedIn = false;
-  String _username = '';
+  final AuthRepository _repo;
+
+  bool   _isLoggedIn = false;
+  String _username   = '';
+
+  AuthProvider(this._repo);
 
   bool get isLoggedIn => _isLoggedIn;
   String get username => _username;
 
   Future<void> checkLogin() async {
-    final authBox = await Hive.openBox<String>('auth');
-    _username = authBox.get('loggedInUser', defaultValue: '')!;
-    _isLoggedIn = _username.isNotEmpty;
+    final user = await _repo.getLoggedInUser();
+    _username   = user ?? '';
+    _isLoggedIn = user != null;
     notifyListeners();
   }
 
   Future<bool> login(String name, String password) async {
-    print('Login attempt: $name, $password');
-    final userBox = await Hive.openBox<User>('users');
-    final user = userBox.get(name);
-    final users = userBox.listenable();
-    users.addListener(() {
-      print('User list changed: ${userBox.values}');
-    });
-    if (user != null && AuthService.verifyPassword(password, user.passwordHash)) {
-      final authBox = await Hive.openBox<String>('auth');
-      await authBox.put('loggedInUser', name);
-      _username = name;
+    final ok = await _repo.login(name, password);
+    if (ok) {
+      _username   = name;
       _isLoggedIn = true;
       notifyListeners();
-      return true;
     }
-    return false;
+    return ok;
   }
 
   Future<void> logout() async {
-    final authBox = await Hive.openBox<String>('auth');
-    await authBox.delete('loggedInUser');
-    _username = '';
+    await _repo.logout();
+    _username   = '';
     _isLoggedIn = false;
     notifyListeners();
   }
