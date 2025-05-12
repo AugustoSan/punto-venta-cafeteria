@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:punto_venta/presentation/providers/auth_provider.dart';
+import 'package:punto_venta/presentation/providers/business_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext ctx) {
-    final email = ctx.read<AuthProvider>().userEmail;
+    final username = ctx.read<AuthProvider>().username;
+    final business = ctx.read<BusinessProvider>().business;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bienvenido'),
+        title: Text(business?.name ?? 'Mi Negocio'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -18,7 +20,7 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Text('Has iniciado sesión como:\n$email'),
+        child: Text('Has iniciado sesión como:\n$username'),
       ),
     );
   }

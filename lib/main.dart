@@ -26,7 +26,7 @@ Future<void> main() async {
   if (userBox.isEmpty) {
     // contraseña: "admin"
     final hash = AuthService.hashPassword('admin');
-    await userBox.put('admin', User(
+    await userBox.add(User(
       userName: 'admin',
       passwordHash: hash,
     ));

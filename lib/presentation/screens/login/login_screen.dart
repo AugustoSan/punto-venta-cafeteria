@@ -10,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailC  = TextEditingController();
+  final _usernameC  = TextEditingController();
   final _passC   = TextEditingController();
   bool  _loading = false;
   String? _error;
@@ -27,10 +27,10 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                controller: _emailC,
-                decoration: const InputDecoration(labelText: 'Email'),
+                controller: _usernameC,
+                decoration: const InputDecoration(labelText: 'Nombre de usuario'),
                 validator: (v) =>
-                  v != null && v.contains('@') ? null : 'Email inválido',
+                  v != null && v.isEmpty ? 'Nombre de usuario inválido' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: const InputDecoration(labelText: 'Contraseña'),
                 obscureText: true,
                 validator: (v) =>
-                  v != null && v.length >= 6 ? null : 'Mínimo 6 caracteres',
+                  v != null && v.length >= 5 ? null : 'Mínimo 5 caracteres',
               ),
               const SizedBox(height: 24),
               if (_error != null)
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() { _loading = true; _error = null; });
 
     final auth = context.read<AuthProvider>();
-    final ok   = await auth.login(_emailC.text, _passC.text);
+    final ok   = await auth.login(_usernameC.text, _passC.text);
 
     setState(() { _loading = false; });
     if (!ok) {
