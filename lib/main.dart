@@ -5,6 +5,7 @@ import 'package:punto_venta/di/locator.dart';
 import 'package:punto_venta/models/businessModel.dart';
 import 'package:punto_venta/models/userModel.dart';
 import 'package:punto_venta/presentation/providers/auth_provider.dart';
+import 'package:punto_venta/presentation/providers/user_provider.dart';
 
 import 'presentation/screens/home/home_screen.dart';
 import 'presentation/screens/settings/settings_screen.dart';
@@ -50,10 +51,13 @@ Future<void> main() async {
   // Box de sesión (guardaremos el email del user logueado)
   // await Hive.openBox<String>('auth');
 
+  await setupLocator();  
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => getIt<BusinessProvider>()..loadBusinessData()),
+        ChangeNotifierProvider(create: (_) => getIt<UserProvider>()..initialize()),
         ChangeNotifierProvider(create: (_) => getIt<AuthProvider>()),
       ],
       child: const MyApp(),
