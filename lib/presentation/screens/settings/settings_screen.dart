@@ -41,9 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Configuración')),
-      body: Padding(
+    return Padding(
         padding: const EdgeInsets.all(16),
         child: Form(                 // ← Aquí
           key: _formKey,            // atachas tu key al Form
@@ -111,8 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),                        // ← Fin del Form
-      ),
-    );
+      );
   }
 
 }

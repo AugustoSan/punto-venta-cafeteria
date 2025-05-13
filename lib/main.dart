@@ -7,9 +7,8 @@ import 'package:punto_venta/models/businessModel.dart';
 import 'package:punto_venta/models/authModel.dart';
 import 'package:punto_venta/presentation/providers/auth_provider.dart';
 import 'package:punto_venta/presentation/providers/user_provider.dart';
+import 'package:punto_venta/presentation/screens/shellapp.dart';
 
-import 'presentation/screens/home/home_screen.dart';
-import 'presentation/screens/settings/settings_screen.dart';
 import 'presentation/providers/business_provider.dart';
 import 'presentation/screens/login/login_screen.dart';
 
@@ -69,14 +68,12 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => userProv),
         ChangeNotifierProvider(create: (_) => getIt<AuthProvider>()),
       ],
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -85,14 +82,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         primaryColor: Colors.blue,
       ),
-      initialRoute: '/', // Ruta inicial
-      routes: {
-        '/': (context) => Consumer<AuthProvider>(
-          builder: (ctx, auth, _) =>
-            auth.isLoggedIn ? const HomeScreen() : const LoginScreen(),
-        ),
-        '/settings': (context) => const SettingsScreen(),
-      },
+
+      home: Consumer<AuthProvider>(
+        builder: (ctx, auth, _) =>
+          auth.isLoggedIn ? ShellApp() : const LoginScreen(),
+      ),
     );
   }
 }
+

@@ -7,12 +7,14 @@ class UsersModel extends Table {
   TextColumn   get password => text()();
 }
 
-// class ProductsModel extends Table {
-//   IntColumn  get id       => integer().autoIncrement()();
-//   TextColumn get name     => text()();
-//   RealColumn get price    => real()();
-//   IntColumn  get stock    => integer().withDefault(const Constant(0))();
-// }
+class MenuItemModel extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  RealColumn get price => real()();
+  TextColumn get category => text()();
+  TextColumn get description => text()();
+  TextColumn get imageUrl => text()();
+}
 
 // class SalesModel extends Table {
 //   IntColumn     get id        => integer().autoIncrement()();

@@ -47,6 +47,7 @@ class UserRepositoryImpl implements UserRepository {
     return user != null && AuthService.verifyPassword(password, user.passwordHash);
   }
 
+  @override
   Future<List<User>> getAllUsers() async {
     final query = _db.select(_db.usersModel);
     final rows = await query.get();
