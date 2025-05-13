@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:punto_venta/presentation/providers/business_provider.dart';
+import 'drawer_items.dart';
 
 class DrawerCustom extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
@@ -25,38 +26,14 @@ class DrawerCustom extends StatelessWidget {
                 ),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Inicio'),
-              onTap: () {
-                Navigator.of(ctx).pop(); // cierra el drawer
-                navigatorKey.currentState!.pushNamed('/home');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuración'),
-              onTap: () {
-                Navigator.of(ctx).pop(); // cierra el drawer
-                navigatorKey.currentState!.pushNamed('/settings');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Perfil'),
-              onTap: () {
-                Navigator.of(ctx).pop(); // cierra el drawer
-              navigatorKey.currentState!.pushNamed('/perfil');
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.help),
-              title: Text('Ayuda'),
-              onTap: () {
-                Navigator.of(ctx).pop(); // cierra el drawer
-              navigatorKey.currentState!.pushNamed('/help');
-              },
-            ),
+            ...drawerItems.map((item) => ListTile(
+            leading: Icon(item.icon),
+            title: Text(item.title),
+            onTap: () {
+              Navigator.of(ctx).pop(); 
+              navigatorKey.currentState!.pushNamed(item.route);
+            },
+          )),
           ],
         ),
       );

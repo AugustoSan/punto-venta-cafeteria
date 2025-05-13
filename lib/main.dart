@@ -6,6 +6,7 @@ import 'package:punto_venta/di/locator.dart';
 import 'package:punto_venta/models/businessModel.dart';
 import 'package:punto_venta/models/authModel.dart';
 import 'package:punto_venta/presentation/providers/auth_provider.dart';
+import 'package:punto_venta/presentation/providers/menuitem_provider.dart';
 import 'package:punto_venta/presentation/providers/user_provider.dart';
 import 'package:punto_venta/presentation/screens/shellapp.dart';
 
@@ -65,6 +66,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => getIt<BusinessProvider>()..loadBusinessData()),
+        ChangeNotifierProvider(create: (_) => getIt<MenuItemProvider>()),
         ChangeNotifierProvider(create: (_) => userProv),
         ChangeNotifierProvider(create: (_) => getIt<AuthProvider>()),
       ],

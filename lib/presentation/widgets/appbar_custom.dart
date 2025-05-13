@@ -4,13 +4,19 @@ import 'package:punto_venta/presentation/providers/auth_provider.dart';
 import 'package:punto_venta/presentation/providers/business_provider.dart';
 
 class AppBarCustom extends StatelessWidget implements PreferredSizeWidget{
-  const AppBarCustom({super.key});
+  final String currentRoute;
+  const AppBarCustom({super.key, required this.currentRoute});
+
 
   @override
   Widget build(BuildContext ctx) {
     final business = ctx.watch<BusinessProvider>().business;
+    print('currentRoute: $currentRoute');
+    String title = (currentRoute == '/home')
+      ? (business?.name ?? 'Sin Nombre')
+      : _mapRouteToTitle(currentRoute);
     return AppBar(
-        title: Text(business?.name ?? 'Sin Nombre'),
+        title: Text(title),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -19,7 +25,18 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget{
         ],
       );
   }
-  
+
+  String _mapRouteToTitle(String route) {
+    switch (route) {
+      case '/settings':   return 'Configuración';
+      case '/menuItems':  return 'Productos';
+      case '/orders':     return 'Órdenes';
+      case '/perfil':     return 'Perfil';
+      case '/help':       return 'Ayuda';
+      default:            return 'Punto de Venta';
+    }
+  }
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
