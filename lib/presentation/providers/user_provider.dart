@@ -5,25 +5,28 @@ import '../../domain/repositories/user_repository.dart';
 
 class UserProvider with ChangeNotifier {
   final UserRepository _repo;
-
-  User? _user;
-  User? get user => _user;
+  bool   _initialized = false;
+  User?  _currentUser;
 
   UserProvider(this._repo);
 
   Future<void> initialize() async {
+    if (_initialized) return;
     await _repo.initialize();
+    _initialized = true;
   }
 
   Future<User?> getUser(String username) async {
-    _user = await _repo.getUser(username);
+    _currentUser = await _repo.getUser(username);
     notifyListeners();
-    return _user;
+    return _currentUser;
   }
 
   Future<bool> validatePassword(String username, String password) async {
     return await _repo.validatePassword(username, password);
   }
+
+  User? get currentUser => _currentUser;
 
   // Future<void> saveUser(User user) async {
   //   _user = user;

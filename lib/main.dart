@@ -15,9 +15,13 @@ import 'presentation/screens/login/login_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 1) Inicializa Hive
   await Hive.initFlutter();
   Hive.registerAdapter(UserModelAdapter());
   Hive.registerAdapter(BusinessModelAdapter());
+
+  // 2) Inicializa Drift
+  // final database = AppDatabase();
   
 
   // // Box de usuarios

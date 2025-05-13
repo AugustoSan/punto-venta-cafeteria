@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:punto_venta/models/userModel.dart';
+import 'package:punto_venta/data/local/app_database.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../services/auth_service.dart';
 import '../../domain/entities/boxes.dart';
@@ -7,8 +7,11 @@ import '../../domain/entities/boxes.dart';
 /// Contrato que define cómo obtener y guardar la configuración del negocio.
 class AuthRepositoryImpl implements AuthRepository {
   static const _AUTH_BOX    = Boxes.authBox;
-  static const _USER_BOX    = Boxes.usersBox;
-  static const _AUTH_KEY    = 'loggedInUser';
+  static const _AUTH_KEY    = Boxes.key;
+
+  final AppDatabase _db;
+
+  AuthRepositoryImpl(this._db);
 
   @override
   Future<String?> getLoggedInUser() async {
@@ -19,16 +22,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
 Future<bool> login(String username, String password) async {
-  final userBox = await Hive.openBox<UserModel>(_USER_BOX);
+  final query = _db.select(_db.usersModel)
+      ..where((u) => u.name.equals(username));
+    final user = await query.getSingleOrNull();
 
-  UserModel? user;
-  try {
-    user = userBox.values.firstWhere((u) => u.userName == username);
-  } catch (_) {
-    user = null;
-  }
-
-  if (user != null && AuthService.verifyPassword(password, user.passwordHash)) {
+  if (user != null && AuthService.verifyPassword(password, user.password)) {
     final authBox = await Hive.openBox<String>(_AUTH_BOX);
     await authBox.put(_AUTH_KEY, username);
     return true;
