@@ -16,9 +16,7 @@ import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
 
-Future<void> setupLocator() async {
-  // Inicializa Drift (SQLite)
-  final db = AppDatabase();
+Future<void> setupLocator(AppDatabase db) async {
 
   // --- Negocio ---
   final businessBox = await Hive.openBox<BusinessModel>(Boxes.businessBox);

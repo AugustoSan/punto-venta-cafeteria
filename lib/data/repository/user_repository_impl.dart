@@ -1,13 +1,9 @@
-import 'package:hive/hive.dart';
 import 'package:punto_venta/data/local/app_database.dart';
-import 'package:punto_venta/domain/entities/boxes.dart';
 import 'package:punto_venta/domain/entities/user.dart';
 import 'package:punto_venta/domain/repositories/user_repository.dart';
-import 'package:punto_venta/services/auth_service.dart';
+import 'package:punto_venta/data/services/auth_service.dart';
 
 class UserRepositoryImpl implements UserRepository {
-  static const _AUTH_BOX = Boxes.authBox;
-  static const _AUTH_KEY = Boxes.key;
   final AppDatabase _db;
 
   UserRepositoryImpl(this._db);
@@ -30,6 +26,10 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<User?> getUser(String username) async {
+    List<User> list = await getAllUsers();
+    for (User user in list) {
+      print(user.userName);
+    }
     final query = _db.select(_db.usersModel)
       ..where((u) => u.name.equals(username));
     final row = await query.getSingleOrNull();
@@ -47,9 +47,12 @@ class UserRepositoryImpl implements UserRepository {
     return user != null && AuthService.verifyPassword(password, user.passwordHash);
   }
 
-  Future<String?> getLoggedInUser() async {
-    final box = await Hive.openBox<String>(_AUTH_BOX);
-    final user = box.get(_AUTH_KEY);
-    return (user != null && user.isNotEmpty) ? user : null;
+  Future<List<User>> getAllUsers() async {
+    final query = _db.select(_db.usersModel);
+    final rows = await query.get();
+    return rows.map((row) => User(
+      userName: row.name,
+      passwordHash: row.password,
+    )).toList();
   }
 }

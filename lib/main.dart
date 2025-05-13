@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:punto_venta/data/local/app_database.dart';
 import 'package:punto_venta/di/locator.dart';
 import 'package:punto_venta/models/businessModel.dart';
-import 'package:punto_venta/models/userModel.dart';
+import 'package:punto_venta/models/authModel.dart';
 import 'package:punto_venta/presentation/providers/auth_provider.dart';
 import 'package:punto_venta/presentation/providers/user_provider.dart';
 
@@ -17,11 +18,11 @@ Future<void> main() async {
 
   // 1) Inicializa Hive
   await Hive.initFlutter();
-  Hive.registerAdapter(UserModelAdapter());
+  Hive.registerAdapter(AuthModelAdapter());
   Hive.registerAdapter(BusinessModelAdapter());
 
   // 2) Inicializa Drift
-  // final database = AppDatabase();
+  final database = AppDatabase();
   
 
   // // Box de usuarios
@@ -55,13 +56,17 @@ Future<void> main() async {
   // Box de sesión (guardaremos el email del user logueado)
   // await Hive.openBox<String>('auth');
 
-  await setupLocator();  
+  await setupLocator(database);  
+
+  // Obtén la instancia y espera a que cargue
+  final userProv = getIt<UserProvider>();
+  await userProv.initialize();
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => getIt<BusinessProvider>()..loadBusinessData()),
-        ChangeNotifierProvider(create: (_) => getIt<UserProvider>()..initialize()),
+        ChangeNotifierProvider(create: (_) => userProv),
         ChangeNotifierProvider(create: (_) => getIt<AuthProvider>()),
       ],
       child: const MyApp(),
