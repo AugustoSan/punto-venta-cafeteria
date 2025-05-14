@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:punto_venta/presentation/providers/auth_provider.dart';
 import 'package:punto_venta/presentation/providers/business_provider.dart';
 
 class AppBarCustom extends StatelessWidget implements PreferredSizeWidget{
@@ -16,14 +15,15 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget{
       ? (business?.name ?? 'Sin Nombre')
       : _mapRouteToTitle(currentRoute);
     return AppBar(
-        title: Text(title),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => ctx.read<AuthProvider>().logout(),
-          ),
-        ],
-      );
+      title: Text(title),
+      backgroundColor: Theme.of(ctx).primaryColor,
+      elevation: 4,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(16),
+        ),
+      ),
+    );
   }
 
   String _mapRouteToTitle(String route) {
